@@ -1,8 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
 from django.http import HttpResponse
 
 from .models import Memo, Attachment
+from .forms import MemoForm, AttachmentForm
 
 
 def index(request):
@@ -12,7 +13,14 @@ def index(request):
 
 
 def create_Memo(request):
-    return HttpResponse("You are creating a memo.")
+    if request.method == 'POST':
+        memo_form = MemoForm(request.POST)
+        if memo_form.is_valid():
+            memo = memo_form.save()
+            return redirect('memo:read_Memo', memo_id=memo.id)
+    else:
+        memo_form = MemoForm()
+    return render(request, 'memo/create_update_memo.html', {'memo_form': memo_form})
 
 
 def read_Memo(request, memo_id):
@@ -22,11 +30,20 @@ def read_Memo(request, memo_id):
 
 
 def update_Memo(request, memo_id):
-    return HttpResponse("You are updating memo %s." % memo_id)
+    memo = get_object_or_404(Memo, pk=memo_id)
+    if request.method == 'POST':
+        memo_form = MemoForm(request.POST, instance=memo)
+        if memo_form.save():
+            return redirect('memo:read_Memo', memo_id=memo_id)
+    else:
+        memo_form = MemoForm(instance=memo)
+    return render(request, 'memo/create_update_memo.html', {'memo_form': memo_form})
 
 
 def delete_Memo(request, memo_id):
-    return HttpResponse("You are deleting memo %s." % memo_id)
+    memo = get_object_or_404(Memo, pk=memo_id)
+    memo.delete()
+    return redirect('memo:index')
 
 
 def create_Attachment(request, memo_id):
