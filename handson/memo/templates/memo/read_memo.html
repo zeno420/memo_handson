@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Memo {{ memo.id }}</title>
+</head>
+<body>
+	<h1>
+		<a href="{% url 'memo:delete_Memo' memo.id %}">(Delete)</a>&nbsp;
+		<a href="{% url 'memo:update_Memo' memo.id %}">(Edit)</a>&nbsp;&nbsp;&nbsp;
+		{{ memo.title }}
+	</h1>
+	<p>{{ memo.text }}</p>
+
+{% if attachment_list %}
+    <h2>Attached URLs:</h2>
+    <ul>
+        {% for a in attachment_list %}
+        <li>
+            <a href="{% url 'memo:delete_Attachment' memo.id a.id %}">(D)</a>&nbsp;&nbsp;&nbsp;
+            <a href="{{ a.url }}">{{ a.url }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No attached URLs!</p>
+{% endif %}
+
+    <p><a href="{% url 'memo:create_Attachment' memo.id %}">Add URL</a></p>
+    <p><a href="{% url 'memo:index' %}">Back to overview</a></p>
+</body>
+</html>

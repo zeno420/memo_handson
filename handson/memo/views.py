@@ -1,11 +1,14 @@
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404
 
 from django.http import HttpResponse
 
+from .models import Memo, Attachment
+
 
 def index(request):
-    return HttpResponse("All memos:")
+    memo_list = Memo.objects.order_by('-modified_at')
+    context = { 'memo_list': memo_list }
+    return render(request, 'memo/index.html', context)
 
 
 def create_Memo(request):
@@ -13,7 +16,9 @@ def create_Memo(request):
 
 
 def read_Memo(request, memo_id):
-    return HttpResponse("You are viewing memo %s." % memo_id)
+    memo = get_object_or_404(Memo, pk=memo_id)
+    attachment_list = Attachment.objects.filter(memo_id=memo_id)
+    return render(request, 'memo/read_memo.html', {'memo': memo, 'attachment_list': attachment_list})
 
 
 def update_Memo(request, memo_id):

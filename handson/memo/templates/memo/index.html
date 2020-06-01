@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Memo overview</title>
+</head>
+<body>
+    <h1>Memo</h1>
+    <p><a href="{% url 'memo:create_Memo' %}">Create</a> a new memo!</p>
+{% if memo_list %}
+    <ul>
+        {% for m in memo_list %}
+        <li>
+            <a href="{% url 'memo:delete_Memo' m.id %}">(D)</a>&nbsp;
+            <a href="{% url 'memo:update_Memo' m.id %}">(E)</a>&nbsp;&nbsp;&nbsp;
+            <a href="{% url 'memo:read_Memo' m.id %}">{{ m.title }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No memos!</p>
+{% endif %}
+</body>
+</html>
