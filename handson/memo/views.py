@@ -47,8 +47,19 @@ def delete_Memo(request, memo_id):
 
 
 def create_Attachment(request, memo_id):
-    return HttpResponse("You are creating an attachment for memo %s." % memo_id)
+    if request.method == 'POST':
+        attachment_form = AttachmentForm(request.POST)
+        if attachment_form.is_valid():
+            attachment = attachment_form.save(commit=False)
+            attachment.memo_id = memo_id
+            attachment.save()
+            return redirect('memo:read_Memo', memo_id=memo_id)
+    else:
+        attachment_form = AttachmentForm()
+    return render(request, 'memo/create_update_attachment.html', {'attachment_form': attachment_form})
 
 
 def delete_Attachment(request, memo_id, attachment_id):
-    return HttpResponse("You are deleting attachmend %s from memo %s." % (attachment_id, memo_id))
+    attachment = get_object_or_404(Attachment, pk=attachment_id)
+    attachment.delete()
+    return redirect('memo:read_Memo', memo_id=memo_id)
